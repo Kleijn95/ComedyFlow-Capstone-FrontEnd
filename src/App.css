@@ -1,21 +1,179 @@
-.calendar-container {
-  background: linear-gradient(135deg, #f0f8ff, #e6f0fa);
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: white;
+  border-top: 1px solid #ddd;
+  display: flex;
+  justify-content: space-around;
+  padding: 0.5rem 0;
+  z-index: 999;
+}
+
+.bottom-nav button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.bottom-nav button:focus {
+  outline: none;
+}
+.btn-comedy-outline {
+  border: 2px solid #51a7e1;
+  color: #51a7e1;
+  background-color: transparent;
+  transition: all 0.25s ease;
+  font-weight: bold;
+}
+
+.btn-comedy-outline:hover {
+  background-color: #51a7e1;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(81, 167, 225, 0.4);
+}
+
+.btn-comedy-fill {
+  background: linear-gradient(90deg, #51a7e1, #8661eb);
+  color: white;
+  border: none;
+  font-weight: bold;
+  transition: all 0.25s ease;
+}
+
+.btn-comedy-fill:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(134, 97, 235, 0.4);
+}
+
+.btn-comedy-outline:active,
+.btn-comedy-fill:active {
+  transform: scale(0.97);
+}
+
+.eventi-wrapper {
+  background: linear-gradient(135deg, #fdf6ff, #e9f4ff);
   padding: 2rem;
   border-radius: 20px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  max-width: 700px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
   margin: 0 auto;
+}
+
+.lista-eventi {
+  list-style: none;
+  padding: 0;
+}
+
+.evento-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+.evento-card:hover {
+  transform: scale(1.01);
+}
+
+.badge-custom {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  display: inline-block;
+  margin: 0.5rem 0;
+  font-weight: 600;
+}
+.badge-custom.terminato {
+  background-color: #adb5bd;
+  color: white;
+}
+.badge-custom.annullato {
+  background-color: #dc3545;
+  color: white;
+}
+.badge-custom.in_programma {
+  background-color: #198754;
+  color: white;
+}
+
+.calendar-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-box {
+  flex: 1 1 280px;
+  min-width: 280px;
+}
+
+.eventi-giorno {
+  flex: 2;
+}
+
+.react-calendar__tile {
+  min-height: 80px !important;
 }
 
 .calendar-event-list {
   list-style: none;
-  padding-left: 0;
+  padding: 0;
   margin: 0;
-}
-
-.calendar-event-item {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: #0d6efd;
   font-weight: 500;
-  padding-left: 2px;
+}
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #fdf6ff, #e9f4ff) !important;
+}
+
+.eventi-bg {
+  background: linear-gradient(135deg, #fdf6ff, #e9f4ff);
+  padding: 2rem;
+}
+
+.eventi-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
+}
+
+.lista-eventi {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .lista-eventi {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.evento-card {
+  background: #fefefe;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease;
+}
+
+.evento-card:hover {
+  transform: scale(1.01);
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { Modal, Button, Form, Row, Col } from "react-bootstrap";
+import { Modal, Button, Form, Row, Col, Card, Badge } from "react-bootstrap";
 import EventiUser from "./EventiUser";
 import { useLocation } from "react-router";
 import { useSelector } from "react-redux";
@@ -9,7 +9,6 @@ const RicercaEventi = () => {
   const token = localStorage.getItem("token");
   const location = useLocation();
 
-  // 📥 STATE E VARIABILI
   const [eventi, setEventi] = useState([]);
   const [provincia, setProvincia] = useState("");
   const [comico, setComico] = useState("");
@@ -17,24 +16,19 @@ const RicercaEventi = () => {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
-
   const [showModal, setShowModal] = useState(false);
   const [selectedEvento, setSelectedEvento] = useState(null);
   const [posti, setPosti] = useState(1);
-
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [emailTest, setEmailTest] = useState("");
   const [messaggio, setMessaggio] = useState("");
   const [usaEmailLocale, setUsaEmailLocale] = useState(true);
-
   const [mostraPrenotazioni, setMostraPrenotazioni] = useState(false);
   const eventiUserRef = useRef(null);
   const [refreshPrenotazioni, setRefreshPrenotazioni] = useState(false);
   const userId = useSelector((state) => state.user.user?.id);
-
   const [wishlist, setWishlist] = useState([]);
 
-  // 🚀 USE EFFECT
   useEffect(() => {
     if (userId) {
       fetchEventi();
@@ -42,10 +36,9 @@ const RicercaEventi = () => {
     }
   }, [page, userId]);
 
-  // 🔄 FUNZIONI DI FETCH
   const fetchEventi = () => {
     setLoading(true);
-    const params = new URLSearchParams({ page, size: 5, sortBy: "id,asc" });
+    const params = new URLSearchParams({ page, size: 6, sortBy: "id,asc" });
     if (provincia) params.append("prov", provincia);
     if (comico) params.append("comico", comico);
     if (dataEvento) params.append("data", dataEvento);
@@ -76,7 +69,6 @@ const RicercaEventi = () => {
     }
   };
 
-  // 🔧 HANDLER
   const handleFiltro = () => {
     setPage(0);
     fetchEventi();
@@ -98,14 +90,12 @@ const RicercaEventi = () => {
 
   const confermaPrenotazione = async () => {
     if (!selectedEvento) return;
-
     try {
       const res = await fetch(`${apiUrl}/prenotazioni/evento/${selectedEvento.id}?numeroPosti=${posti}`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Errore nella prenotazione");
-
       alert("Prenotazione effettuata!");
       setShowModal(false);
       setRefreshPrenotazioni((prev) => !prev);
@@ -114,9 +104,8 @@ const RicercaEventi = () => {
       alert("Errore durante la prenotazione");
     }
   };
-  const isComicoInWishlist = (comicoId) => {
-    return wishlist.some((item) => item.comicoId === comicoId);
-  };
+
+  const isComicoInWishlist = (comicoId) => wishlist.some((item) => item.comicoId === comicoId);
 
   const toggleComicoWishlist = async (comicoId) => {
     if (!comicoId) return;
@@ -134,17 +123,9 @@ const RicercaEventi = () => {
   };
 
   const inviaEmailAlLocale = async () => {
-    if (!selectedEvento || !messaggio) {
-      alert("Compila tutti i campi.");
-      return;
-    }
-
+    if (!selectedEvento || !messaggio) return alert("Compila tutti i campi.");
     const destinatario = usaEmailLocale ? selectedEvento.emailLocale : emailTest;
-    if (!destinatario) {
-      alert("Email destinatario non valida.");
-      return;
-    }
-
+    if (!destinatario) return alert("Email destinatario non valida.");
     try {
       const res = await fetch(`${apiUrl}/email/contatta-locale`, {
         method: "POST",
@@ -154,9 +135,7 @@ const RicercaEventi = () => {
         },
         body: JSON.stringify({ emailLocale: destinatario, messaggio }),
       });
-
       if (!res.ok) throw new Error("Errore durante l'invio dell'email");
-
       alert("Email inviata con successo!");
       setShowEmailModal(false);
       setEmailTest("");
@@ -168,10 +147,7 @@ const RicercaEventi = () => {
     }
   };
 
-  // 🧠 FUNZIONI LOGICHE
-  const isInWishlist = (eventoId) => {
-    return wishlist.some((item) => item.eventoId === eventoId);
-  };
+  const isInWishlist = (eventoId) => wishlist.some((item) => item.eventoId === eventoId);
 
   const toggleWishlist = async (eventoId) => {
     const presente = isInWishlist(eventoId);
@@ -187,11 +163,14 @@ const RicercaEventi = () => {
     }
   };
 
-  // 🖼️ RENDER
   return (
-    <div className="container-fluid">
+    <div className="container-fluid px-4">
       <div className="d-flex justify-content-end mb-3">
-        <Button variant="outline-dark" onClick={() => setMostraPrenotazioni(!mostraPrenotazioni)}>
+        <Button
+          variant="outline-dark"
+          className="d-none d-xxl-block"
+          onClick={() => setMostraPrenotazioni(!mostraPrenotazioni)}
+        >
           {mostraPrenotazioni ? "Nascondi le tue prenotazioni" : "Vedi le tue prenotazioni"}
         </Button>
       </div>
@@ -207,34 +186,34 @@ const RicercaEventi = () => {
         )}
 
         <Col md={mostraPrenotazioni ? 9 : 12}>
-          <h1>Ricerca Eventi</h1>
+          <h2 className="mb-4 fw-bold">Ricerca Eventi</h2>
           <div className="d-flex flex-wrap gap-3 mb-4">
             <input
               type="text"
               placeholder="Provincia"
               value={provincia}
               onChange={(e) => setProvincia(e.target.value)}
-              className="form-control"
+              className="form-control w-auto"
             />
             <input
               type="text"
               placeholder="Comico"
               value={comico}
               onChange={(e) => setComico(e.target.value)}
-              className="form-control"
+              className="form-control w-auto"
             />
             <input
               type="date"
               value={dataEvento}
               onChange={(e) => setDataEvento(e.target.value)}
-              className="form-control"
+              className="form-control w-auto"
             />
-            <button className="btn btn-primary" onClick={handleFiltro}>
+            <Button variant="primary" onClick={handleFiltro}>
               Filtra
-            </button>
-            <button className="btn btn-outline-secondary" onClick={handleReset}>
+            </Button>
+            <Button variant="outline-secondary" onClick={handleReset}>
               Reset
-            </button>
+            </Button>
           </div>
 
           {loading ? (
@@ -242,84 +221,72 @@ const RicercaEventi = () => {
           ) : eventi.length === 0 ? (
             <p>Nessun evento trovato.</p>
           ) : (
-            <>
-              <ul className="list-group mb-3">
-                {eventi.map((evento) => (
-                  <li key={evento.id} className="list-group-item">
-                    <div className="d-flex justify-content-between align-items-start">
-                      <div>
-                        <h5>{evento.titolo}</h5>
-                        <p>{evento.descrizione}</p>
-                        <p>
-                          <strong>Data:</strong> {new Date(evento.dataOra).toLocaleString("it-IT")}
-                        </p>
-                        <p>
-                          <strong>Luogo:</strong> {evento.nomeLocale} - {evento.provincia}
-                        </p>
-                        <p>
-                          <strong>Comico:</strong> {evento.nomeComico}{" "}
-                          <button
-                            className="btn btn-sm btn-outline-danger"
-                            title="Segui comico"
-                            onClick={() => toggleComicoWishlist(evento.comicoId)}
-                          >
-                            {isComicoInWishlist(evento.comicoId) ? "❤️" : "🤍"}
-                          </button>
-                        </p>
-
-                        <p>
-                          <strong>Posti disponibili:</strong> {evento.numeroPostiDisponibili} /{" "}
-                          {evento.numeroPostiTotali}
-                        </p>
+            <Row xs={1} md={2} className="g-4">
+              {eventi.map((evento) => (
+                <Col key={evento.id}>
+                  <Card className="shadow-sm h-100">
+                    <Card.Body>
+                      <Card.Title className="d-flex justify-content-between align-items-start">
+                        <span>{evento.titolo}</span>
+                        <Button variant="link" onClick={() => toggleWishlist(evento.id)} title="Aggiungi ai preferiti">
+                          {isInWishlist(evento.id) ? "❤️" : "🤍"}
+                        </Button>
+                      </Card.Title>
+                      <Card.Text>{evento.descrizione}</Card.Text>
+                      <Badge bg="info" className="mb-2">
+                        {new Date(evento.dataOra).toLocaleString("it-IT")}
+                      </Badge>
+                      <Card.Text>
+                        <strong>Luogo:</strong> {evento.nomeLocale} - {evento.provincia}
+                      </Card.Text>
+                      <Card.Text>
+                        <strong>Comico:</strong> {evento.nomeComico}{" "}
+                        <Button
+                          size="sm"
+                          variant="outline-danger"
+                          onClick={() => toggleComicoWishlist(evento.comicoId)}
+                        >
+                          {isComicoInWishlist(evento.comicoId) ? "❤️" : "🤍"}
+                        </Button>
+                      </Card.Text>
+                      <Card.Text>
+                        <strong>Posti:</strong> {evento.numeroPostiDisponibili} / {evento.numeroPostiTotali}
+                      </Card.Text>
+                      <div className="d-flex flex-wrap gap-2">
                         {new Date(evento.dataOra) > new Date() && (
-                          <button className="btn btn-success mt-2" onClick={() => apriPrenotazione(evento)}>
+                          <Button variant="success" size="sm" onClick={() => apriPrenotazione(evento)}>
                             Prenota
-                          </button>
+                          </Button>
                         )}
-
-                        <button
-                          className="btn btn-outline-primary mt-2 ms-2"
+                        <Button
+                          variant="outline-primary"
+                          size="sm"
                           onClick={() => {
                             setSelectedEvento(evento);
                             setShowEmailModal(true);
                           }}
                         >
-                          Contatta il locale ✉️
-                        </button>
+                          Contatta ✉️
+                        </Button>
                       </div>
-                      <button
-                        className="btn btn-outline-danger"
-                        onClick={() => toggleWishlist(evento.id)}
-                        title="Aggiungi ai preferiti"
-                      >
-                        {isInWishlist(evento.id) ? "❤️" : "🤍"}
-                      </button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-
-              <div className="d-flex justify-content-center align-items-center gap-3">
-                <button
-                  className="btn btn-outline-secondary"
-                  disabled={page === 0}
-                  onClick={() => setPage((p) => p - 1)}
-                >
-                  ← Indietro
-                </button>
-                <span>
-                  Pagina {page + 1} di {totalPages}
-                </span>
-                <button
-                  className="btn btn-outline-secondary"
-                  disabled={page + 1 >= totalPages}
-                  onClick={() => setPage((p) => p + 1)}
-                >
-                  Avanti →
-                </button>
-              </div>
-            </>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
           )}
+
+          <div className="d-flex justify-content-center align-items-center gap-3 mt-4">
+            <Button variant="outline-secondary" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>
+              ← Indietro
+            </Button>
+            <span>
+              Pagina {page + 1} di {totalPages}
+            </span>
+            <Button variant="outline-secondary" disabled={page + 1 >= totalPages} onClick={() => setPage((p) => p + 1)}>
+              Avanti →
+            </Button>
+          </div>
         </Col>
       </Row>
 

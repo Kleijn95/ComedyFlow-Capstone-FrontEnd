@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
 
 const EventiUser = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -137,30 +136,14 @@ const EventiUser = () => {
     const giàRecensitoLocale = recensioni[keyLocale]?.inviata;
 
     return (
-      <li key={prenotazioneId} className="mb-4">
-        <strong>{evento.titoloEvento}</strong>
-        <br />
-        <span
-          className={`badge me-2 ${
-            evento.statoEvento === "TERMINATO"
-              ? "bg-secondary"
-              : evento.statoEvento === "ANNULLATO"
-              ? "bg-danger"
-              : "bg-success"
-          }`}
-        >
-          {evento.statoEvento}
-        </span>
-        <br />
-        Evento: {formatDate(evento.dataOraEvento)}
-        <br />
-        Prenotazione: {formatDate(evento.dataOraPrenotazione)}
-        <br />
-        Luogo: {evento.nomeLocale}
-        <br />
+      <li key={prenotazioneId} className="evento-card">
+        <strong>{evento.titoloEvento} </strong>
+        <div className={`badge-custom ${evento.statoEvento.toLowerCase()}`}>{evento.statoEvento}</div>
+        <div className="small text-muted">Data evento: {formatDate(evento.dataOraEvento)}</div>
+        <div className="small text-muted">Prenotato il: {formatDate(evento.dataOraPrenotazione)}</div>
+        <div className="mb-2">Luogo: {evento.nomeLocale}</div>
         {evento.statoEvento === "TERMINATO" && (
           <div className="mt-3">
-            <h6>Recensisci l'evento:</h6>
             <div className="border rounded p-2 mb-3 bg-light">
               <h6 className="text-success">Recensione Comico</h6>
               {giàRecensitoComico ? (
@@ -228,7 +211,7 @@ const EventiUser = () => {
           </div>
         )}
         {evento.statoEvento === "IN_PROGRAMMA" && (
-          <>
+          <div className="mt-2">
             Prenotati:{" "}
             {editingId === prenotazioneId ? (
               <>
@@ -268,53 +251,57 @@ const EventiUser = () => {
             <button className="btn btn-danger btn-sm mt-2" onClick={() => annullaPrenotazione(prenotazioneId)}>
               Annulla prenotazione
             </button>
-          </>
-        )}
+          </div>
+        )}{" "}
       </li>
     );
   };
 
   return (
-    <div>
-      <h1>Le tue prenotazioni, {capitalize(user?.nome)}!</h1>
-      <button
-        className="btn btn-outline-primary mb-3"
-        onClick={() => setView(view === "LISTA" ? "CALENDARIO" : "LISTA")}
-      >
-        Visualizzazione: {view === "LISTA" ? "Calendario" : "Lista"}
-      </button>
-      {view === "LISTA" ? (
-        <ul>{eventiFiltrati.map(renderEvento)}</ul>
-      ) : (
-        <div className="calendar-container d-flex gap-4">
-          <div className="p-3 border rounded">
-            <Calendar
-              onClickDay={setSelectedDate}
-              tileContent={({ date }) => {
-                const giorno = date.toDateString();
-                const eventiDelGiorno = eventiPerData[giorno];
-                return eventiDelGiorno ? (
-                  <ul className="calendar-event-list">
-                    {eventiDelGiorno.map((e) => (
-                      <li key={e.id} className="calendar-event-item">
-                        • {e.titoloEvento}
-                      </li>
-                    ))}
-                  </ul>
-                ) : null;
-              }}
-            />
-          </div>
-          <div className="flex-grow-1">
-            <h5>Eventi del giorno</h5>
-            {eventiDelGiorno.length === 0 ? (
-              <p className="text-muted">Nessun evento per questo giorno.</p>
-            ) : (
-              <ul>{eventiDelGiorno.map(renderEvento)}</ul>
-            )}
-          </div>
+    <div className="eventi-bg">
+      <div className="eventi-wrapper">
+        <h2 className="text-center fw-bold mb-4">Le tue prenotazioni, {capitalize(user?.nome)}!</h2>
+        <div className="text-center mb-4">
+          <button
+            className="btn btn-outline-primary"
+            onClick={() => setView(view === "LISTA" ? "CALENDARIO" : "LISTA")}
+          >
+            Visualizzazione: {view === "LISTA" ? "Calendario" : "Lista"}
+          </button>
         </div>
-      )}
+        {view === "LISTA" ? (
+          <ul className="lista-eventi">{eventiFiltrati.map(renderEvento)}</ul>
+        ) : (
+          <div className="calendar-container">
+            <div className="calendar-box">
+              <Calendar
+                onClickDay={setSelectedDate}
+                tileContent={({ date }) => {
+                  const giorno = date.toDateString();
+                  const eventiDelGiorno = eventiPerData[giorno];
+                  return eventiDelGiorno ? (
+                    <ul className="calendar-event-list">
+                      {eventiDelGiorno.map((e) => (
+                        <li key={e.id} className="calendar-event-item">
+                          • {e.titoloEvento}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null;
+                }}
+              />
+            </div>
+            <div className="eventi-giorno">
+              <h5 className="mb-3">Eventi del giorno</h5>
+              {eventiDelGiorno.length === 0 ? (
+                <p className="text-muted">Nessun evento per questo giorno.</p>
+              ) : (
+                <ul className="lista-eventi">{eventiDelGiorno.map(renderEvento)}</ul>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

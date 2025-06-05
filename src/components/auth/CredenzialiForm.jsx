@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, Card, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import { LOGOUT } from "../../redux/actions";
 
@@ -83,10 +83,11 @@ const CredenzialiForm = () => {
   };
 
   return (
-    <div className="mt-5">
-      <h4>Modifica Password</h4>
-      {message && <p className="text-success">{message}</p>}
-      {error && <p className="text-danger">{error}</p>}
+    <Card className="shadow-sm p-4">
+      <Card.Title className="mb-3">Modifica Password</Card.Title>
+
+      {message && <Alert variant="success">{message}</Alert>}
+      {error && <Alert variant="danger">{error}</Alert>}
 
       <Form>
         <Form.Group className="mb-3">
@@ -111,11 +112,13 @@ const CredenzialiForm = () => {
           />
         </Form.Group>
 
-        <Button variant="warning" onClick={handleUpdate}>
-          Cambia Password
-        </Button>
+        <div className="d-flex justify-content-center">
+          <Button variant="warning" onClick={handleUpdate}>
+            Cambia Password
+          </Button>
+        </div>
       </Form>
-    </div>
+    </Card>
   );
 };
 

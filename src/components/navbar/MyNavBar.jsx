@@ -1,19 +1,16 @@
-import { Container, Nav, Navbar, Modal } from "react-bootstrap";
+// Navbar aggiornata in stile moderno ComedyFlow con design ispirato al mockup
+import { Container, Nav, Navbar } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
-import { useNavigate, Link, NavLink } from "react-router";
+import { useEffect } from "react";
+import { useNavigate, Link, NavLink } from "react-router-dom";
 import { fetchUserDetails, LOGOUT } from "../../redux/actions";
-import MyLogin from "../auth/MyLogin";
-import MyRegister from "../auth/MyRegister";
+import logo from "../../assets/logo.png";
 
-function MyNavBar() {
+function MyNavBar({ openLoginModal, openRegisterModal }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.user);
   const token = localStorage.getItem("token");
-
-  const [showLogin, setShowLogin] = useState(false);
-  const [showRegister, setShowRegister] = useState(false);
 
   useEffect(() => {
     if (token && !user) {
@@ -32,45 +29,35 @@ function MyNavBar() {
     return "/dashboard";
   };
 
-  const handleLoginSuccess = () => {
-    setShowLogin(false);
-    navigate(getDashboardPath());
-  };
-
-  const handleRegisterSuccess = () => {
-    setShowRegister(false);
-    navigate("/login");
-  };
-
   return (
-    <>
-      <Navbar expand="lg" className="bg-body-tertiary d-none d-lg-block">
-        <Container>
-          <Navbar.Brand as={Link} to="/">
-            ComedyFlow
-          </Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto">
-              <Nav.Link as={Link} to="/" active={window.location.pathname === "/"}>
-                Home
-              </Nav.Link>
-              {user && (
-                <Nav.Link as={Link} to={getDashboardPath()} active={window.location.pathname === getDashboardPath()}>
-                  Dashboard
-                </Nav.Link>
-              )}
-            </Nav>
+    <Navbar expand="lg" className="px-4 py-2 shadow-sm d-none d-md-flex" style={{ backgroundColor: "#fff7fc" }}>
+      <Container fluid>
+        <Navbar.Brand as={Link} to="/" className="fw-bold d-flex align-items-center gap-2">
+          <img src={logo} alt={logo} width="100" height="100" className="d-inline-block align-top rounded-circle" />
+          <span style={{ color: "#51a7e1" }}>Comedy</span>
+          <span style={{ color: "#8661eb" }}>Flow</span>
+        </Navbar.Brand>
 
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
+          <Nav className="align-items-center gap-3">
+            <Nav.Link as={NavLink} to="/" className="fw-medium">
+              Home
+            </Nav.Link>
+            {user && (
+              <Nav.Link as={NavLink} to={getDashboardPath()} className="fw-medium">
+                Dashboard
+              </Nav.Link>
+            )}
             {user ? (
-              <Nav className="d-flex align-items-center gap-3">
-                <Nav.Link as={NavLink} to="/profile" className="d-flex align-items-center gap-2 fw-bold">
+              <>
+                <Nav.Link as={NavLink} to="/profile" className="fw-bold d-flex align-items-center gap-2">
                   {user.avatar && (
                     <img
                       src={user.avatar}
                       alt="avatar"
-                      width="32"
-                      height="32"
+                      width="30"
+                      height="30"
                       className="rounded-circle border"
                       style={{ objectFit: "cover" }}
                     />
@@ -79,45 +66,31 @@ function MyNavBar() {
                     ? user.nomeLocale
                     : `${capitalize(user.nome)} ${capitalize(user.cognome)}`}
                 </Nav.Link>
-
                 <Nav.Link
                   onClick={() => {
-                    navigate("/"); // Sposta subito via dalla Dashboard
                     localStorage.removeItem("token");
                     dispatch({ type: LOGOUT });
+                    navigate("/");
                   }}
+                  className="text-danger"
                 >
                   Logout
                 </Nav.Link>
-              </Nav>
+              </>
             ) : (
-              <Nav className="d-flex gap-3">
-                <Nav.Link onClick={() => setShowLogin(true)}>Login</Nav.Link>
-                <Nav.Link onClick={() => setShowRegister(true)}>Registrati</Nav.Link>
-              </Nav>
+              <>
+                <Nav.Link className="btn btn-comedy-outline px-3 py-1 rounded-pill" onClick={openLoginModal}>
+                  Login
+                </Nav.Link>
+                <Nav.Link className="btn btn-comedy-fill px-3 py-1 rounded-pill" onClick={openRegisterModal}>
+                  Registrati
+                </Nav.Link>
+              </>
             )}
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
-
-      <Modal show={showLogin} onHide={() => setShowLogin(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Login</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <MyLogin inline={true} closeModal={() => setShowLogin(false)} onSuccess={handleLoginSuccess} />
-        </Modal.Body>
-      </Modal>
-
-      <Modal show={showRegister} onHide={() => setShowRegister(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Registrazione</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <MyRegister inline={true} closeModal={() => setShowRegister(false)} onSuccess={handleRegisterSuccess} />
-        </Modal.Body>
-      </Modal>
-    </>
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
   );
 }
 

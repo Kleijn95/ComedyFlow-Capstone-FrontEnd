@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Button, Card, Row, Col, Modal, Form } from "react-bootstrap";
+import { Button, Card, Row, Col, Modal, Form, Container, ListGroup } from "react-bootstrap";
 
 const Wishlist = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -25,7 +25,6 @@ const Wishlist = () => {
       const data = await res.json();
       setWishlist(data);
 
-      // carica eventi per i comici salvati
       const comiciSalvati = data.filter((w) => w.comicoId).map((w) => w.comicoId);
       comiciSalvati.forEach(async (id) => {
         const res = await fetch(`${apiUrl}/eventi?comicoId=${id}`);
@@ -60,7 +59,6 @@ const Wishlist = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Errore nella prenotazione");
-
       alert("Prenotazione effettuata!");
       setShowModal(false);
     } catch (err) {
@@ -73,19 +71,37 @@ const Wishlist = () => {
   const comici = wishlist.filter((w) => w.comicoId);
 
   return (
-    <div className="container py-4">
-      <h2 className="mb-4">La tua Wishlist</h2>
+    <Container className="py-5">
+      <h2 className="text-center mb-4">La tua Wishlist</h2>
 
-      <h4>Eventi salvati</h4>
+      {/* Eventi salvati */}
+      <h4 className="mb-3">Eventi salvati</h4>
       {eventi.length === 0 ? (
-        <p>Nessun evento salvato.</p>
+        <p className="text-muted">Nessun evento salvato.</p>
       ) : (
-        <Row className="mb-5">
+        <Row xs={1} md={2} className="g-4 mb-5">
           {eventi.map((e) => (
-            <Col md={6} key={e.id} className="mb-3">
-              <Card>
+            <Col key={e.id}>
+              <Card className="shadow-sm h-100">
                 <Card.Body>
                   <Card.Title>{e.titoloEvento}</Card.Title>
+                  <Card.Text>
+                    <strong>Descrizione:</strong> {e.descrizioneEvento}
+                    <br />
+                    <strong>Data:</strong> {new Date(e.dataEvento).toLocaleString("it-IT")}
+                    <br />
+                    <strong>Posti disponibili:</strong> {e.postiDisponibili}
+                    <br />
+                    <strong>Stato:</strong> {e.statoEvento}
+                    <br />
+                    <strong>Comico:</strong> {e.nomeComico} {e.cognomeComico}
+                    <br />
+                    {e.avatarComico && (
+                      <img src={e.avatarComico} alt="avatar comico" width={50} className="rounded-circle my-2" />
+                    )}
+                    <br />
+                    <strong>Locale:</strong> {e.nomeLocale} ({e.indirizzoLocale})
+                  </Card.Text>
                   <Button variant="outline-danger" size="sm" onClick={() => toggleWishlist({ eventoId: e.eventoId })}>
                     ❤️ Rimuovi
                   </Button>
@@ -96,28 +112,40 @@ const Wishlist = () => {
         </Row>
       )}
 
-      <h4>Comici seguiti</h4>
+      {/* Comici seguiti */}
+      <h4 className="mb-3">Comici seguiti</h4>
       {comici.length === 0 ? (
-        <p>Nessun comico seguito.</p>
+        <p className="text-muted">Nessun comico seguito.</p>
       ) : (
         comici.map((c) => (
-          <div key={c.id} className="mb-4">
-            <div className="d-flex justify-content-between align-items-center">
-              <h5>{c.nomeComico}</h5>
+          <div key={c.id} className="mb-5">
+            <div className="d-flex justify-content-between align-items-center mb-2">
+              <h5 className="mb-0">
+                {c.nomeComico} {c.cognomeComico}
+              </h5>
               <Button variant="outline-danger" size="sm" onClick={() => toggleWishlist({ comicoId: c.comicoId })}>
                 ❤️ Rimuovi
               </Button>
             </div>
             {eventiComico[c.comicoId]?.length > 0 ? (
-              <ul className="list-group mt-2">
+              <ListGroup>
                 {eventiComico[c.comicoId].map((ev) => (
-                  <li key={ev.id} className="list-group-item d-flex justify-content-between align-items-center">
+                  <ListGroup.Item key={ev.id} className="d-flex justify-content-between align-items-start">
                     <div>
                       <strong>{ev.titolo}</strong> - {new Date(ev.dataOra).toLocaleDateString("it-IT")}
+                      <br />
+                      {ev.descrizione}
+                      <br />
+                      Posti disponibili: {ev.numeroPostiDisponibili}
+                      <br />
+                      Stato: {ev.stato}
+                      <br />
+                      <strong>Locale:</strong> {ev.nomeLocale}
                     </div>
                     <Button
                       size="sm"
                       variant="success"
+                      className="ms-2"
                       onClick={() => {
                         setSelectedEvento(ev);
                         setPosti(1);
@@ -126,9 +154,9 @@ const Wishlist = () => {
                     >
                       Prenota
                     </Button>
-                  </li>
+                  </ListGroup.Item>
                 ))}
-              </ul>
+              </ListGroup>
             ) : (
               <p className="text-muted">Nessun evento futuro di questo comico.</p>
             )}
@@ -136,7 +164,7 @@ const Wishlist = () => {
         ))
       )}
 
-      {/* MODALE */}
+      {/* Modale prenotazione */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Prenota per {selectedEvento?.titolo}</Modal.Title>
@@ -160,7 +188,7 @@ const Wishlist = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-    </div>
+    </Container>
   );
 };
 

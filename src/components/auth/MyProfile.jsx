@@ -96,99 +96,99 @@ const MyProfile = () => {
   };
 
   return (
-    <Container className="mt-5" style={{ maxWidth: "600px" }}>
-      <h3>Modifica Profilo</h3>
-      <Form>
-        {isLocale ? (
-          <>
-            <Form.Group className="mb-3">
-              <Form.Label>Nome del locale</Form.Label>
-              <Form.Control type="text" name="nomeLocale" value={formData.nomeLocale} onChange={handleChange} />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Descrizione</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                name="descrizione"
-                value={formData.descrizione}
-                onChange={handleChange}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Via</Form.Label>
-              <Form.Control type="text" name="via" value={formData.via} onChange={handleChange} />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Comune</Form.Label>
-              <Form.Select name="comuneId" value={formData.comuneId} onChange={handleChange}>
-                <option value={0}>-- Seleziona comune --</option>
-                {comuni.map((comune) => (
-                  <option key={comune.id} value={comune.id}>
-                    {comune.nome} ({comune.provinciaSigla})
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Email</Form.Label>
-              <Form.Control type="email" name="email" value={formData.email} onChange={handleChange} />
-            </Form.Group>
-          </>
-        ) : isComico ? (
-          <>
-            <Form.Group className="mb-3">
-              <Form.Label>Nome</Form.Label>
-              <Form.Control type="text" name="nome" value={formData.nome} onChange={handleChange} />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Cognome</Form.Label>
-              <Form.Control type="text" name="cognome" value={formData.cognome} onChange={handleChange} />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Email</Form.Label>
-              <Form.Control type="email" name="email" value={formData.email} onChange={handleChange} />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Biografia</Form.Label>
-              <Form.Control as="textarea" rows={3} name="bio" value={formData.bio} onChange={handleChange} />
-            </Form.Group>
-          </>
-        ) : (
-          <>
-            <Form.Group className="mb-3">
-              <Form.Label>Nome</Form.Label>
-              <Form.Control type="text" name="nome" value={formData.nome} onChange={handleChange} />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Cognome</Form.Label>
-              <Form.Control type="text" name="cognome" value={formData.cognome} onChange={handleChange} />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Email</Form.Label>
-              <Form.Control type="email" name="email" value={formData.email} onChange={handleChange} />
-            </Form.Group>
-          </>
-        )}
+    <Container className="mt-5" style={{ maxWidth: "750px" }}>
+      <h3 className="mb-4 text-center">Modifica Profilo</h3>
+      <Card className="shadow-sm p-4">
+        <Form>
+          {isLocale ? (
+            <>
+              <Form.Group className="mb-3">
+                <Form.Label>Nome del locale</Form.Label>
+                <Form.Control type="text" name="nomeLocale" value={formData.nomeLocale} onChange={handleChange} />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Descrizione</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  name="descrizione"
+                  value={formData.descrizione}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Via</Form.Label>
+                <Form.Control type="text" name="via" value={formData.via} onChange={handleChange} />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Comune</Form.Label>
+                <Form.Select name="comuneId" value={formData.comuneId} onChange={handleChange}>
+                  <option value={0}>-- Seleziona comune --</option>
+                  {comuni.map((comune) => (
+                    <option key={comune.id} value={comune.id}>
+                      {comune.nome} ({comune.provinciaSigla})
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Email</Form.Label>
+                <Form.Control type="email" name="email" value={formData.email} onChange={handleChange} />
+              </Form.Group>
+            </>
+          ) : isComico ? (
+            <>
+              <Form.Group className="mb-3">
+                <Form.Label>Nome</Form.Label>
+                <Form.Control type="text" name="nome" value={formData.nome} onChange={handleChange} />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Cognome</Form.Label>
+                <Form.Control type="text" name="cognome" value={formData.cognome} onChange={handleChange} />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Email</Form.Label>
+                <Form.Control type="email" name="email" value={formData.email} onChange={handleChange} />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Biografia</Form.Label>
+                <Form.Control as="textarea" rows={3} name="bio" value={formData.bio} onChange={handleChange} />
+              </Form.Group>
+            </>
+          ) : (
+            <>
+              <Form.Group className="mb-3">
+                <Form.Label>Nome</Form.Label>
+                <Form.Control type="text" name="nome" value={formData.nome} onChange={handleChange} />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Cognome</Form.Label>
+                <Form.Control type="text" name="cognome" value={formData.cognome} onChange={handleChange} />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Email</Form.Label>
+                <Form.Control type="email" name="email" value={formData.email} onChange={handleChange} />
+              </Form.Group>
+            </>
+          )}
 
-        <Button variant="primary" onClick={handleSave}>
-          Salva modifiche
+          <div className="d-flex justify-content-center mt-3">
+            <Button variant="primary" onClick={handleSave}>
+              Salva modifiche
+            </Button>
+          </div>
+        </Form>
+      </Card>
+
+      <Card className="my-4 shadow-sm p-4">
+        <Card.Title className="mb-3">Avatar</Card.Title>
+        <Form.Group>
+          <Form.Label>Carica immagine</Form.Label>
+          <Form.Control type="file" accept="image/*" onChange={handleFileUpload} />
+        </Form.Group>
+        <Button variant="secondary" className="mt-2" onClick={handleUploadAvatar}>
+          Carica Avatar
         </Button>
-      </Form>
-
-      <hr className="my-4" />
-
-      <Card className="mb-4">
-        <Card.Body>
-          <Card.Title>Avatar</Card.Title>
-          <Form.Group>
-            <Form.Label>Carica immagine</Form.Label>
-            <Form.Control type="file" accept="image/*" onChange={handleFileUpload} />
-          </Form.Group>
-          <Button variant="secondary" className="mt-2" onClick={handleUploadAvatar}>
-            Carica Avatar
-          </Button>
-        </Card.Body>
       </Card>
 
       {user && <CredenzialiForm userId={user.id} usernameAttuale={user.appUser.username} />}

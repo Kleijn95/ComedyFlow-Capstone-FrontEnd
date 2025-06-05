@@ -18,12 +18,32 @@ import PartecipantiEvento from "./components/dashboardLocale/PartecipantiEvento"
 import CercaComici from "./components/dashboardLocale/CercaComici";
 import MieRecensioni from "./components/dashboardUser/MieRecensioni";
 import Wishlist from "./components/dashboardUser/Wishlist";
+import BottomNav from "./components/navbar/BottomNav";
+import { Modal } from "react-bootstrap";
+import MyLogin from "./components/auth/MyLogin";
+import { useState } from "react";
+import MyRegister from "./components/auth/MyRegister";
 
 function App() {
+  const [showLogin, setShowLogin] = useState(false);
+
+  const openLoginModal = () => setShowLogin(true);
+  const closeLoginModal = () => setShowLogin(false);
+  const [showRegister, setShowRegister] = useState(false);
+
+  const openRegisterModal = () => setShowRegister(true);
+  const closeRegisterModal = () => setShowRegister(false);
+
+  const handleLoginSuccess = () => {
+    closeLoginModal();
+    // eventualmente fai un redirect
+  };
+
   return (
     <>
       <BrowserRouter>
-        <MyNavBar />
+        <MyNavBar openLoginModal={openLoginModal} openRegisterModal={openRegisterModal} />
+        <BottomNav openLoginModal={openLoginModal} />
         <Routes>
           <Route path="/" element={<LoginPage />} />
           {/* ❌ RIMOSSE rotte login/register */}
@@ -44,6 +64,25 @@ function App() {
           <Route path="/mieRecensioni" element={<MieRecensioni />} />
           <Route path="/Wishlist" element={<Wishlist />} />
         </Routes>
+        <Modal show={showLogin} onHide={closeLoginModal} centered>
+          <Modal.Body className="p-0">
+            <MyLogin
+              inline
+              closeModal={closeLoginModal}
+              onSuccess={handleLoginSuccess}
+              openRegisterModal={() => {
+                closeLoginModal();
+                openRegisterModal();
+              }}
+            />
+          </Modal.Body>
+        </Modal>
+
+        <Modal show={showRegister} onHide={closeRegisterModal} centered>
+          <Modal.Body className="p-0">
+            <MyRegister inline={true} closeModal={closeRegisterModal} />
+          </Modal.Body>
+        </Modal>
       </BrowserRouter>
     </>
   );

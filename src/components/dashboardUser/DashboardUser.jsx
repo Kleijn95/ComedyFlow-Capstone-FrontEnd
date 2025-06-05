@@ -3,6 +3,8 @@ import { useSelector } from "react-redux";
 import logo from "../../assets/logo.png";
 import { Link } from "react-router";
 import { ArrowRight } from "react-bootstrap-icons";
+import decorCurve from "../../assets/linea.png";
+import decorStar from "../../assets/stella.png";
 
 export default function DashboardUser() {
   const user = useSelector((state) => state.user.user);
@@ -19,12 +21,24 @@ export default function DashboardUser() {
   const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 
   return (
-    <Container fluid className="p-0" style={{ minHeight: "100vh", position: "relative", backgroundColor: "#f8f9fa" }}>
+    <Container
+      fluid
+      className="p-0 position-relative"
+      style={{ background: "linear-gradient(135deg, #fdf6ff, #e9f4ff)" }}
+    >
+      {/* Decorazioni */}
+
+      <img
+        src={decorCurve}
+        alt="decorazione curva"
+        style={{ position: "absolute", bottom: "20px", right: "30px", width: "120px", zIndex: 0, opacity: 0.5 }}
+      />
+
       {/* Header */}
-      <Card className="border-0 rounded-0 shadow-sm mb-3">
-        <Card.Body className="d-flex align-items-center justify-content-between bg-white px-4 py-3">
+      <Card className="border-0 rounded-0 shadow-sm mb-3 bg-white">
+        <Card.Body className="d-flex align-items-center justify-content-between px-4 py-3">
           <div className="d-flex align-items-center">
-            <Image src={user?.avatar} roundedCircle width={50} height={50} className="me-3" />
+            <Image src={user?.avatar} roundedCircle width={50} height={50} className="me-3 border border-2" />
             <div>
               <div className="text-muted small">Benvenuto</div>
               <h5 className="mb-0">
@@ -32,58 +46,58 @@ export default function DashboardUser() {
               </h5>
             </div>
           </div>
-          <Image src={logo} height={40} />
+          <Image src={logo} width={100} height={100} />
         </Card.Body>
       </Card>
 
       {/* Sezioni */}
       <Container className="mb-5">
-        <Card className="mb-3 shadow-sm border-0 text-decoration-none colorDiv" as={Link} to="/EventiUser">
-          <Card.Body className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center px-4 py-3">
-            <div>
-              <h5 className="mb-1">Gestione Eventi</h5>
-              <p className="mb-2 small">Visualizza tutti gli eventi a cui hai partecipato</p>
-            </div>
-            <p className="text-end mb-0">
-              Vai agli eventi <ArrowRight className="ms-2" />
-            </p>
-          </Card.Body>
-        </Card>
-
-        <Card className="shadow-sm border-0 text-decoration-none colorDiv" as={Link} to="/RicercaEventi">
-          <Card.Body className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center px-4 py-3">
-            <div>
-              <h5 className="mb-1">Cerca eventi</h5>
-              <p className="mb-2 small">Cerca eventi nei tuoi paraggi</p>
-            </div>
-            <p className="text-end mb-0">
-              Vai alla ricerca <ArrowRight className="ms-2" />
-            </p>
-          </Card.Body>
-        </Card>
-
-        <Card className="shadow-sm border-0 text-decoration-none colorDiv" as={Link} to="/mieRecensioni">
-          <Card.Body className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center px-4 py-3">
-            <div>
-              <h5 className="mb-1">Le mie recensioni</h5>
-              <p className="mb-2 small">Visualizza e gestisci le recensioni che hai lasciato</p>
-            </div>
-            <p className="text-end mb-0">
-              Vai alle recensioni <ArrowRight className="ms-2" />
-            </p>
-          </Card.Body>
-        </Card>
-        <Card className="shadow-sm border-0 text-decoration-none colorDiv" as={Link} to="/Wishlist">
-          <Card.Body className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center px-4 py-3">
-            <div>
-              <h5 className="mb-1">Preferiti</h5>
-              <p className="mb-2 small">Eventi salvati e comici che segui</p>
-            </div>
-            <p className="text-end mb-0">
-              Vai alla wishlist <ArrowRight className="ms-2" />
-            </p>
-          </Card.Body>
-        </Card>
+        {[
+          {
+            to: "/EventiUser",
+            title: "Gestione Eventi",
+            desc: "Visualizza tutti gli eventi a cui hai partecipato",
+            btn: "Vai agli eventi",
+          },
+          {
+            to: "/RicercaEventi",
+            title: "Cerca eventi",
+            desc: "Cerca eventi nei tuoi paraggi",
+            btn: "Vai alla ricerca",
+          },
+          {
+            to: "/mieRecensioni",
+            title: "Le mie recensioni",
+            desc: "Visualizza e gestisci le recensioni che hai lasciato",
+            btn: "Vai alle recensioni",
+          },
+          {
+            to: "/Wishlist",
+            title: "Preferiti",
+            desc: "Eventi salvati e comici che segui",
+            btn: "Vai alla wishlist",
+          },
+        ].map((card, idx) => (
+          <Card
+            key={idx}
+            className="mb-3 shadow-sm border-0 text-decoration-none colorDiv hover-shadow"
+            as={Link}
+            to={card.to}
+            style={{ transition: "transform 0.2s", backgroundColor: "#ffffffcc", backdropFilter: "blur(5px)" }}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.02)")}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+          >
+            <Card.Body className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center px-4 py-3">
+              <div>
+                <h5 className="mb-1">{card.title}</h5>
+                <p className="mb-2 small text-muted">{card.desc}</p>
+              </div>
+              <p className="text-end mb-0 text-primary">
+                {card.btn} <ArrowRight className="ms-2" />
+              </p>
+            </Card.Body>
+          </Card>
+        ))}
       </Container>
     </Container>
   );

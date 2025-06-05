@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Container, Row, Col, Card, Badge } from "react-bootstrap";
 
 const MieRecensioni = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -7,7 +8,6 @@ const MieRecensioni = () => {
 
   useEffect(() => {
     if (!token) return;
-
     fetch(`${apiUrl}/recensioni/mie`, {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -29,26 +29,34 @@ const MieRecensioni = () => {
   };
 
   return (
-    <div>
-      <h2>Le mie recensioni</h2>
+    <Container className="my-5">
+      <h2 className="text-center mb-4">Le mie recensioni</h2>
       {recensioni.length === 0 ? (
-        <p>Non hai ancora lasciato recensioni.</p>
+        <p className="text-center text-muted">Non hai ancora lasciato recensioni.</p>
       ) : (
-        <ul className="list-group">
+        <Row xs={1} md={2} className="g-4 justify-content-center">
           {recensioni.map((r) => (
-            <li key={r.id} className="list-group-item">
-              <strong>{r.titoloEvento}</strong> - {r.tipo === "COMICO" ? "Recensione Comico" : "Recensione Locale"}
-              <br />
-              <span>Voto: {r.voto} ⭐</span>
-              <br />
-              <span>Contenuto: {r.contenuto}</span>
-              <br />
-              <small className="text-muted">Data: {formatDate(r.data)}</small>
-            </li>
+            <Col key={r.id}>
+              <Card className="h-100 shadow-sm">
+                <Card.Body>
+                  <Card.Title className="mb-2">{r.titoloEvento}</Card.Title>
+                  <Badge bg={r.tipo === "COMICO" ? "warning" : "secondary"} className="mb-3">
+                    {r.tipo === "COMICO" ? "Recensione Comico" : "Recensione Locale"}
+                  </Badge>
+                  <Card.Text>
+                    <strong>Voto:</strong> {r.voto} ⭐
+                  </Card.Text>
+                  <Card.Text>
+                    <strong>Contenuto:</strong> {r.contenuto}
+                  </Card.Text>
+                </Card.Body>
+                <Card.Footer className="text-muted small">{formatDate(r.data)}</Card.Footer>
+              </Card>
+            </Col>
           ))}
-        </ul>
+        </Row>
       )}
-    </div>
+    </Container>
   );
 };
 

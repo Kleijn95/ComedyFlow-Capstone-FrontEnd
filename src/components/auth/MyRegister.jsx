@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button } from "react-bootstrap";
+import { Button, CloseButton, Form } from "react-bootstrap";
 
 function MyRegister({ inline = false, closeModal }) {
   const [formData, setFormData] = useState({
@@ -61,56 +61,73 @@ function MyRegister({ inline = false, closeModal }) {
   };
 
   return (
-    <div>
-      <h2 className="text-center">Registrati</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {success && (
-        <div className="alert alert-success">
-          Registrazione completata! Controlla la mail per verificare l'indirizzo. Se hai richiesto un ruolo avanzato,
-          attendi l'approvazione da parte dell'amministratore.
-        </div>
-      )}
+    <div className="position-relative">
+      <button
+        type="button"
+        onClick={closeModal}
+        className="btn btn-light position-absolute top-0 end-0 m-2 rounded-circle shadow-sm border"
+        style={{ zIndex: 10 }}
+      >
+        <CloseButton size={22} />
+      </button>
 
-      <form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit} className="bg-white p-4 rounded-4 shadow-sm border border-light-subtle mt-4">
+        <h4 className="text-center text-primary mb-4 fw-bold">Registrati su ComedyFlow</h4>
+
+        {error && <div className="alert alert-danger small">{error}</div>}
+        {success && (
+          <div className="alert alert-success">
+            Registrazione completata! Controlla la mail per verificare l'indirizzo. Se hai richiesto un ruolo avanzato,
+            attendi l'approvazione da parte dell'amministratore.
+          </div>
+        )}
+
         {["nome", "cognome", "email", "username", "password"].map((field) => (
-          <div key={field} className="my-2">
-            <input
+          <Form.Group className="mb-3" key={field}>
+            <Form.Label className="text-capitalize">{field}</Form.Label>
+            <Form.Control
               type={field === "password" ? "password" : "text"}
               name={field}
-              placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-              className="form-control"
               value={formData[field]}
               onChange={handleChange}
-              required={field !== "avatar"}
+              required
+              className="rounded-pill px-3 py-2"
             />
-          </div>
+          </Form.Group>
         ))}
 
-        <div className="my-2">
-          <select
+        <Form.Group className="mb-3">
+          <Form.Label>Ruolo</Form.Label>
+          <Form.Select
             name="ruoloRichiesto"
-            className="form-control"
             value={formData.ruoloRichiesto}
             onChange={handleChange}
             required
+            className="rounded-pill px-3 py-2"
           >
             <option value="ROLE_SPETTATORE">Spettatore</option>
             <option value="ROLE_COMICO">Comico</option>
             <option value="ROLE_LOCALE">Locale</option>
-          </select>
-        </div>
+          </Form.Select>
+        </Form.Group>
 
-        <div className="d-flex justify-content-between my-2">
-          <Button type="submit" variant="outline-success">
-            Registrati
-          </Button>
-          {!inline && (
-            <Button variant="outline-secondary" onClick={() => window.location.assign("/login")}>
+        <Button type="submit" className="btn-comedy-fill w-100 rounded-pill py-2">
+          Registrati
+        </Button>
+
+        {!inline && (
+          <p className="mt-4 text-center small">
+            Hai già un account?{" "}
+            <span
+              className="text-decoration-underline text-info fw-bold"
+              style={{ cursor: "pointer" }}
+              onClick={() => window.location.assign("/login")}
+            >
               Torna al login
-            </Button>
-          )}
-        </div>
-      </form>
+            </span>
+          </p>
+        )}
+      </Form>
     </div>
   );
 }
