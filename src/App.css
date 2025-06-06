@@ -86,6 +86,7 @@
   display: inline-block;
   margin: 0.5rem 0;
   font-weight: 600;
+  margin-left: 0.5rem;
 }
 .badge-custom.terminato {
   background-color: #adb5bd;
@@ -172,8 +173,34 @@ body {
   padding: 1rem 1.5rem;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.04);
   transition: transform 0.2s ease;
+  backdrop-filter: blur(4px);
 }
 
 .evento-card:hover {
+  transform: scale(1.01);
+}
+.star-anim {
+  transition: transform 0.2s;
+}
+.star-anim:hover {
+  transform: scale(1.2);
+}
+.form-control:focus,
+.form-select:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+button:hover {
+  transform: scale(1.03);
+}
+.modal-header.bg-warning-subtle {
+  background-color: #fff3cd !important;
+}
+
+.modal-footer.bg-light {
+  border-top: none;
+}
+.recensione-card:hover {
   transform: scale(1.01);
 }

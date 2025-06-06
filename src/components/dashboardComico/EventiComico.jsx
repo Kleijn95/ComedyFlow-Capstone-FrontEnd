@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Card, Container, Spinner, Button, Form, Modal } from "react-bootstrap";
+import { Container, Spinner, Button, Form, Modal } from "react-bootstrap";
 
 export default function EventiComico() {
   const [eventi, setEventi] = useState([]);
@@ -19,11 +19,11 @@ export default function EventiComico() {
   useEffect(() => {
     const fetchEventi = async () => {
       try {
-        const response = await fetch(`${apiUrl}/eventi?comicoId=${user?.id}`, {
+        const res = await fetch(`${apiUrl}/eventi?comicoId=${user?.id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (!response.ok) throw new Error("Errore nel recupero degli eventi");
-        const data = await response.json();
+        if (!res.ok) throw new Error("Errore nel recupero degli eventi");
+        const data = await res.json();
         setEventi(data.content || []);
       } catch (err) {
         console.error(err);
@@ -34,21 +34,21 @@ export default function EventiComico() {
     if (user?.id) fetchEventi();
   }, [user, apiUrl, token]);
 
-  const eventiFiltrati = eventi.filter((evento) => {
-    if (filtroStato === "TUTTI") return true;
-    return evento.stato === filtroStato;
-  });
+  const eventiFiltrati = eventi.filter((e) => (filtroStato === "TUTTI" ? true : e.stato === filtroStato));
+
+  const formatDate = (iso) =>
+    new Date(iso).toLocaleString("it-IT", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
 
   const inviaEmailAlLocale = async () => {
-    if (!eventoSelezionato || !messaggio) {
-      alert("Compila tutti i campi.");
-      return;
-    }
+    if (!eventoSelezionato || !messaggio) return alert("Compila tutti i campi.");
     const destinatario = usaEmailLocale ? eventoSelezionato.emailLocale : emailTest;
-    if (!destinatario) {
-      alert("Email destinatario non valida.");
-      return;
-    }
+    if (!destinatario) return alert("Email destinatario non valida.");
     try {
       const res = await fetch(`${apiUrl}/email/contatta-locale`, {
         method: "POST",
@@ -58,79 +58,66 @@ export default function EventiComico() {
         },
         body: JSON.stringify({ emailLocale: destinatario, messaggio }),
       });
-      if (!res.ok) throw new Error("Errore durante l'invio dell'email");
+      if (!res.ok) throw new Error("Errore invio email");
       alert("Email inviata con successo!");
       setShowEmailModal(false);
       setEmailTest("");
       setMessaggio("");
       setUsaEmailLocale(true);
     } catch (err) {
-      console.error(err);
       alert("Errore nell'invio dell'email");
     }
   };
 
+  const renderEvento = (evento) => (
+    <li key={evento.id} className="evento-card">
+      <strong>{evento.titolo}</strong>
+      <div className={`badge-custom ${evento.stato.toLowerCase()}`}>{evento.stato}</div>
+      <div className="small text-muted">Data evento: {formatDate(evento.dataOra)}</div>
+      <div className="mb-1">
+        Luogo: {evento.nomeLocale} ({evento.comuneNome})
+      </div>
+      <div className="mb-1">
+        Posti: {evento.numeroPostiDisponibili} / {evento.numeroPostiTotali}
+      </div>
+      <Button
+        variant="outline-primary"
+        size="sm"
+        className="mt-2"
+        onClick={() => {
+          setEventoSelezionato(evento);
+          setShowEmailModal(true);
+        }}
+      >
+        Contatta locale ✉️
+      </Button>
+    </li>
+  );
+
   return (
-    <Container className="py-4">
-      <h2>I miei eventi</h2>
-
-      <Form.Group className="mb-3">
-        <Form.Label>Filtra per stato:</Form.Label>
-        <Form.Select value={filtroStato} onChange={(e) => setFiltroStato(e.target.value)}>
-          <option value="TUTTI">Tutti</option>
-          <option value="IN_PROGRAMMA">In programma</option>
-          <option value="TERMINATO">Terminato</option>
-          <option value="ANNULLATO">Annullato</option>
-        </Form.Select>
-      </Form.Group>
-
-      {loading ? (
-        <div className="text-center py-5">
-          <Spinner animation="border" variant="primary" />
+    <div className="eventi-bg">
+      <div className="eventi-wrapper">
+        <h2 className="text-center fw-bold mb-4">I tuoi eventi, {user?.nome}!</h2>
+        <div className="mb-4">
+          <Form.Select value={filtroStato} onChange={(e) => setFiltroStato(e.target.value)}>
+            <option value="TUTTI">Tutti</option>
+            <option value="IN_PROGRAMMA">In programma</option>
+            <option value="TERMINATO">Terminato</option>
+            <option value="ANNULLATO">Annullato</option>
+          </Form.Select>
         </div>
-      ) : eventiFiltrati.length === 0 ? (
-        <p className="text-muted">Nessun evento trovato.</p>
-      ) : (
-        eventiFiltrati.map((evento) => (
-          <Card key={evento.id} className="mb-3 shadow-sm">
-            <Card.Body>
-              <Card.Title>{evento.titolo}</Card.Title>
-              <Card.Text>
-                <strong>Data:</strong> {new Date(evento.dataOra).toLocaleString("it-IT")}
-                <br />
-                <strong>Luogo:</strong> {evento.nomeLocale} ({evento.comuneNome})<br />
-                <strong>Posti:</strong> {evento.numeroPostiDisponibili} / {evento.numeroPostiTotali}
-                <br />
-                <strong>Stato:</strong>{" "}
-                <span
-                  className={`badge ${
-                    evento.stato === "TERMINATO"
-                      ? "bg-secondary"
-                      : evento.stato === "ANNULLATO"
-                      ? "bg-danger"
-                      : "bg-success"
-                  }`}
-                >
-                  {evento.stato}
-                </span>
-                <br />
-                <Button
-                  variant="outline-primary"
-                  size="sm"
-                  className="mt-2"
-                  onClick={() => {
-                    setEventoSelezionato(evento);
-                    setShowEmailModal(true);
-                  }}
-                >
-                  Contatta locale ✉️
-                </Button>
-              </Card.Text>
-            </Card.Body>
-          </Card>
-        ))
-      )}
+        {loading ? (
+          <div className="text-center py-5">
+            <Spinner animation="border" variant="primary" />
+          </div>
+        ) : eventiFiltrati.length === 0 ? (
+          <p className="text-muted">Nessun evento trovato.</p>
+        ) : (
+          <ul className="lista-eventi">{eventiFiltrati.map(renderEvento)}</ul>
+        )}
+      </div>
 
+      {/* Modal email */}
       <Modal show={showEmailModal} onHide={() => setShowEmailModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Contatta il locale - {eventoSelezionato?.nomeLocale}</Modal.Title>
@@ -143,7 +130,6 @@ export default function EventiComico() {
                 className="form-check-input"
                 type="radio"
                 id="usaLocale"
-                name="emailChoice"
                 checked={usaEmailLocale}
                 onChange={() => setUsaEmailLocale(true)}
               />
@@ -156,12 +142,11 @@ export default function EventiComico() {
                 className="form-check-input"
                 type="radio"
                 id="usaTest"
-                name="emailChoice"
                 checked={!usaEmailLocale}
                 onChange={() => setUsaEmailLocale(false)}
               />
               <label className="form-check-label" htmlFor="usaTest">
-                Inserisci un’email alternativa
+                Inserisci email alternativa
               </label>
             </div>
             {!usaEmailLocale && (
@@ -194,6 +179,6 @@ export default function EventiComico() {
           </Button>
         </Modal.Footer>
       </Modal>
-    </Container>
+    </div>
   );
 }

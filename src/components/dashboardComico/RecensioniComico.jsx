@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Container, Card, Spinner, Row, Col, Form, Button } from "react-bootstrap";
+import { Container, Card, Spinner, Row, Col, Form, Button, Badge } from "react-bootstrap";
 import { StarFill, Star } from "react-bootstrap-icons";
 
 export default function RecensioniComico() {
@@ -36,23 +36,30 @@ export default function RecensioniComico() {
     if (user?.id) fetchRecensioni();
   }, [user]);
 
+  const resetFiltri = () => {
+    setEvento("");
+    setVotoMinimo("");
+    fetchRecensioni();
+  };
+
   const renderStelle = (voto) =>
     Array.from({ length: 5 }, (_, i) =>
-      i < voto ? <StarFill key={i} className="text-warning" /> : <Star key={i} className="text-muted" />
+      i < voto ? <StarFill key={i} className="text-warning star-anim" /> : <Star key={i} className="text-muted" />
     );
 
   return (
     <Container className="py-4">
-      <h2 className="mb-4">Recensioni ricevute</h2>
+      <h2 className="mb-3 fw-bold text-center text-primary">📣 Recensioni ricevute</h2>
 
       {/* 🔍 FILTRI */}
-      <Form className="mb-4 d-flex gap-3 flex-wrap">
+      <Form className="mb-4 d-flex flex-wrap gap-2 justify-content-center">
         <Form.Control
           placeholder="Filtra per titolo evento"
           value={evento}
           onChange={(e) => setEvento(e.target.value)}
+          style={{ maxWidth: "220px" }}
         />
-        <Form.Select value={votoMinimo} onChange={(e) => setVotoMinimo(e.target.value)}>
+        <Form.Select value={votoMinimo} onChange={(e) => setVotoMinimo(e.target.value)} style={{ maxWidth: "180px" }}>
           <option value="">Tutti i voti</option>
           {[5, 4, 3, 2, 1].map((v) => (
             <option key={v} value={v}>
@@ -63,6 +70,9 @@ export default function RecensioniComico() {
         <Button onClick={fetchRecensioni} variant="primary">
           Filtra
         </Button>
+        <Button onClick={resetFiltri} variant="outline-secondary">
+          Reset
+        </Button>
       </Form>
 
       {loading ? (
@@ -70,29 +80,39 @@ export default function RecensioniComico() {
           <Spinner animation="border" variant="primary" />
         </div>
       ) : recensioni.length === 0 ? (
-        <p className="text-muted">Nessuna recensione trovata.</p>
+        <p className="text-muted text-center">Nessuna recensione trovata.</p>
       ) : (
         recensioni.map((recensione) => (
-          <Card key={recensione.id} className="mb-3 shadow-sm">
+          <Card
+            key={recensione.id}
+            className="mb-3 shadow-sm recensione-card"
+            style={{ transition: "transform 0.2s" }}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.01)")}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+          >
             <Card.Body>
-              <Row>
-                <Col md={6}>
+              <Row className="align-items-start">
+                <Col md={8}>
                   <h5 className="mb-1">
                     <strong>Autore:</strong> {recensione.autore}
                   </h5>
                   <p className="text-muted mb-2">
                     <strong>Evento:</strong> {recensione.titoloEvento}
-                    <br />
-                    <strong>Data Recensione:</strong> {new Date(recensione.data).toLocaleDateString("it-IT")}
                   </p>
                 </Col>
-                <Col
-                  md={6}
-                  className="d-flex justify-content-md-end justify-content-start align-items-start gap-1 mt-2 mt-md-0"
-                >
+                <Col md={4} className="text-md-end text-start mt-2 mt-md-0">
                   {renderStelle(recensione.voto)}
                 </Col>
               </Row>
+              <div className="mb-2">
+                <Badge bg="light" text="dark">
+                  {new Date(recensione.data).toLocaleDateString("it-IT", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
+                </Badge>
+              </div>
               <hr />
               <p className="mb-0">
                 <strong>Contenuto:</strong>

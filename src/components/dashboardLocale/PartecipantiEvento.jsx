@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Table, Container, Spinner, Alert, Button } from "react-bootstrap";
+import { Container, Spinner, Alert, Button, Card, Row, Col, Image } from "react-bootstrap";
 import { useSearchParams, useNavigate } from "react-router";
 
 const PartecipantiEvento = () => {
@@ -11,7 +11,7 @@ const PartecipantiEvento = () => {
   const navigate = useNavigate();
 
   const eventoId = searchParams.get("eventoId");
-  const titoloEvento = searchParams.get("titolo"); // 🆕 otteniamo il titolo dalla querystring
+  const titoloEvento = searchParams.get("titolo");
 
   useEffect(() => {
     const fetchPartecipanti = async () => {
@@ -34,38 +34,47 @@ const PartecipantiEvento = () => {
     }
   }, [eventoId]);
 
-  if (loading) return <Spinner animation="border" />;
-  if (errore) return <Alert variant="danger">{errore}</Alert>;
+  if (loading) return <Spinner animation="border" className="d-block mx-auto mt-5" />;
+  if (errore)
+    return (
+      <Alert variant="danger" className="mt-4 text-center">
+        {errore}
+      </Alert>
+    );
 
   return (
     <Container className="mt-4">
-      <Button variant="outline-primary" onClick={() => navigate("/dashboardLocale")} className="mb-3">
+      <Button variant="outline-primary" onClick={() => navigate("/dashboardLocale")} className="mb-4">
         ← Torna alla Dashboard
       </Button>
 
+      <h3 className="fw-bold mb-4 text-center">👥 Partecipanti a “{titoloEvento}”</h3>
+
       {partecipanti.length === 0 ? (
-        <Alert variant="info" className="mt-3">
+        <Alert variant="info" className="text-center">
           Nessun partecipante registrato per questo evento.
         </Alert>
       ) : (
-        <Table striped bordered hover responsive className="mt-3">
-          <thead>
-            <tr>
-              <th>Nome spettatore</th>
-              <th>Posti prenotati</th>
-              <th>Data prenotazione</th>
-            </tr>
-          </thead>
-          <tbody>
-            {partecipanti.map((p) => (
-              <tr key={p.id}>
-                <td>{p.nomeSpettatore}</td>
-                <td>{p.numeroPostiPrenotati}</td>
-                <td>{new Date(p.dataOraPrenotazione).toLocaleString()}</td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+        <Row xs={1} sm={2} md={3} className="g-4">
+          {partecipanti.map((p) => (
+            <Col key={p.id}>
+              <Card className="h-100 shadow-sm border-0">
+                <Card.Body className="text-center">
+                  <Image
+                    src={p.avatar || "https://via.placeholder.com/60?text=👤"}
+                    roundedCircle
+                    className="mb-3"
+                    style={{ width: 60, height: 60, objectFit: "cover" }}
+                  />
+                  <Card.Title className="fs-5 fw-semibold mb-1">{p.nomeSpettatore}</Card.Title>
+                  <Card.Text className="text-muted small mb-2">
+                    📅 {new Date(p.dataOraPrenotazione).toLocaleDateString()} • 🪑 {p.numeroPostiPrenotati} posti
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
+        </Row>
       )}
     </Container>
   );
