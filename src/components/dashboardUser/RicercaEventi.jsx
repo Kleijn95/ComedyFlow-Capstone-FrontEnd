@@ -187,34 +187,40 @@ const RicercaEventi = () => {
 
         <Col md={mostraPrenotazioni ? 9 : 12}>
           <h2 className="mb-4 fw-bold">Ricerca Eventi</h2>
-          <div className="d-flex flex-wrap gap-3 mb-4">
-            <input
+          <Form
+            className="d-flex flex-wrap gap-3 mb-4"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleFiltro();
+            }}
+          >
+            <Form.Control
               type="text"
               placeholder="Provincia"
               value={provincia}
               onChange={(e) => setProvincia(e.target.value)}
-              className="form-control w-auto"
+              className="w-auto"
             />
-            <input
+            <Form.Control
               type="text"
               placeholder="Comico"
               value={comico}
               onChange={(e) => setComico(e.target.value)}
-              className="form-control w-auto"
+              className="w-auto"
             />
-            <input
+            <Form.Control
               type="date"
               value={dataEvento}
               onChange={(e) => setDataEvento(e.target.value)}
-              className="form-control w-auto"
+              className="w-auto"
             />
-            <Button variant="primary" onClick={handleFiltro}>
+            <Button variant="primary" type="submit">
               Filtra
             </Button>
-            <Button variant="outline-secondary" onClick={handleReset}>
+            <Button variant="outline-secondary" type="button" onClick={handleReset}>
               Reset
             </Button>
-          </div>
+          </Form>
 
           {loading ? (
             <p>Caricamento...</p>
@@ -224,35 +230,54 @@ const RicercaEventi = () => {
             <Row xs={1} md={2} className="g-4">
               {eventi.map((evento) => (
                 <Col key={evento.id}>
-                  <Card className="shadow-sm h-100">
-                    <Card.Body>
-                      <Card.Title className="d-flex justify-content-between align-items-start">
-                        <span>{evento.titolo}</span>
-                        <Button variant="link" onClick={() => toggleWishlist(evento.id)} title="Aggiungi ai preferiti">
-                          {isInWishlist(evento.id) ? "❤️" : "🤍"}
-                        </Button>
-                      </Card.Title>
-                      <Card.Text>{evento.descrizione}</Card.Text>
-                      <Badge bg="info" className="mb-2">
-                        {new Date(evento.dataOra).toLocaleString("it-IT")}
-                      </Badge>
-                      <Card.Text>
-                        <strong>Luogo:</strong> {evento.nomeLocale} - {evento.provincia}
-                      </Card.Text>
-                      <Card.Text>
-                        <strong>Comico:</strong> {evento.nomeComico}{" "}
-                        <Button
-                          size="sm"
-                          variant="outline-danger"
-                          onClick={() => toggleComicoWishlist(evento.comicoId)}
-                        >
-                          {isComicoInWishlist(evento.comicoId) ? "❤️" : "🤍"}
-                        </Button>
-                      </Card.Text>
-                      <Card.Text>
-                        <strong>Posti:</strong> {evento.numeroPostiDisponibili} / {evento.numeroPostiTotali}
-                      </Card.Text>
-                      <div className="d-flex flex-wrap gap-2">
+                  <Card className="shadow-sm h-100 border-0">
+                    {evento.locandina && (
+                      <Card.Img
+                        variant="top"
+                        src={evento.locandina}
+                        alt="Locandina evento"
+                        style={{
+                          height: "200px",
+                          objectFit: "cover",
+                          borderTopLeftRadius: "0.5rem",
+                          borderTopRightRadius: "0.5rem",
+                        }}
+                      />
+                    )}
+                    <Card.Body className="d-flex flex-column justify-content-between">
+                      <div>
+                        <Card.Title className="d-flex justify-content-between align-items-start">
+                          <span>{evento.titolo}</span>
+                          <Button
+                            variant="link"
+                            onClick={() => toggleWishlist(evento.id)}
+                            title="Aggiungi ai preferiti"
+                          >
+                            {isInWishlist(evento.id) ? "❤️" : "🤍"}
+                          </Button>
+                        </Card.Title>
+                        <Card.Text>{evento.descrizione}</Card.Text>
+                        <Badge bg="info" className="mb-2">
+                          {new Date(evento.dataOra).toLocaleString("it-IT")}
+                        </Badge>
+                        <Card.Text>
+                          <strong>Luogo:</strong> {evento.nomeLocale} - {evento.provincia}
+                        </Card.Text>
+                        <Card.Text>
+                          <strong>Comico:</strong> {evento.nomeComico}{" "}
+                          <Button
+                            size="sm"
+                            variant="outline-danger"
+                            onClick={() => toggleComicoWishlist(evento.comicoId)}
+                          >
+                            {isComicoInWishlist(evento.comicoId) ? "❤️" : "🤍"}
+                          </Button>
+                        </Card.Text>
+                        <Card.Text>
+                          <strong>Posti:</strong> {evento.numeroPostiDisponibili} / {evento.numeroPostiTotali}
+                        </Card.Text>
+                      </div>
+                      <div className="d-flex flex-wrap gap-2 mt-3">
                         {new Date(evento.dataOra) > new Date() && (
                           <Button variant="success" size="sm" onClick={() => apriPrenotazione(evento)}>
                             Prenota

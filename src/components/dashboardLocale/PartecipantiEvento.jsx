@@ -44,8 +44,8 @@ const PartecipantiEvento = () => {
 
   return (
     <Container className="mt-4">
-      <Button variant="outline-primary" onClick={() => navigate("/dashboardLocale")} className="mb-4">
-        ← Torna alla Dashboard
+      <Button variant="outline-primary" onClick={() => navigate("/dashboardLocale/eventiLocale")} className="mb-4">
+        ← Torna ai tuoi eventi
       </Button>
 
       <h3 className="fw-bold mb-4 text-center">👥 Partecipanti a “{titoloEvento}”</h3>

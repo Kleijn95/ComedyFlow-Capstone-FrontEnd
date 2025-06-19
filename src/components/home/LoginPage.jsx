@@ -7,6 +7,7 @@ import MyRegister from "../auth/MyRegister";
 import comicoImg from "../../assets/572b3c3a-093a-4b6d-8ba8-13bf43998249.png"; // aggiorna percorso se necessario
 import stella from "../../assets/stella.png";
 import linea from "../../assets/linea.png";
+import { useSelector } from "react-redux";
 
 const LoginPage = () => {
   const [showLogin, setShowLogin] = useState(false);
@@ -16,6 +17,7 @@ const LoginPage = () => {
   const closeLogin = () => setShowLogin(false);
   const openRegister = () => setShowRegister(true);
   const closeRegister = () => setShowRegister(false);
+  const user = useSelector((state) => state.user.user);
 
   return (
     <>
@@ -73,32 +75,33 @@ const LoginPage = () => {
               </p>
 
               {/* Bottoni con decorazione linea */}
-              <div
-                className="d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-md-start"
-                style={{ position: "relative" }}
-              >
-                <Button className="btn-comedy-fill" onClick={openLogin}>
-                  Accedi
-                </Button>
-                <Button className="btn-comedy-fill" onClick={openRegister}>
-                  Registrati
-                </Button>
+              {!user && (
+                <div
+                  className="d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-md-start"
+                  style={{ position: "relative" }}
+                >
+                  <Button className="btn-comedy-fill" onClick={openLogin}>
+                    Accedi
+                  </Button>
+                  <Button className="btn-comedy-fill" onClick={openRegister}>
+                    Registrati
+                  </Button>
 
-                {/* Linea decorativa */}
-                <img
-                  src={linea}
-                  alt="linea decorativa"
-                  style={{
-                    position: "absolute",
-                    top: "100%",
-                    right: "-30px",
-                    width: "120px",
-                    maxWidth: "30%",
-                    marginTop: "10px",
-                    zIndex: 0,
-                  }}
-                />
-              </div>
+                  <img
+                    src={linea}
+                    alt="linea decorativa"
+                    style={{
+                      position: "absolute",
+                      top: "100%",
+                      right: "-30px",
+                      width: "120px",
+                      maxWidth: "30%",
+                      marginTop: "10px",
+                      zIndex: 0,
+                    }}
+                  />
+                </div>
+              )}
 
               <section className="py-5">
                 <Container style={{ maxWidth: "900px" }}>

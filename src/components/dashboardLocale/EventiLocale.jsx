@@ -171,7 +171,7 @@ const EventiLocale = () => {
               </ul>
 
               <div className="d-flex flex-wrap gap-2 mt-3">
-                {evento.stato !== "ANNULLATO" && (
+                {evento.stato === "IN_PROGRAMMA" && new Date(evento.dataOra) > new Date() && (
                   <>
                     <Button variant="outline-primary" onClick={() => handleEdit(evento)} className="btn-action">
                       ✏️ Modifica
@@ -188,6 +188,7 @@ const EventiLocale = () => {
                     </Button>
                   </>
                 )}
+
                 <Button variant="outline-danger" onClick={() => setShowContattaAdmin(true)} className="btn-action">
                   🛠️ Contatta Admin
                 </Button>

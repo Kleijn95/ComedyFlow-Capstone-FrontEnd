@@ -72,7 +72,7 @@ const Wishlist = () => {
 
   return (
     <Container className="py-5">
-      <h2 className="text-center mb-4">La tua Wishlist</h2>
+      <h2 className="text-center mb-4">I tuoi preferiti</h2>
 
       {/* Eventi salvati */}
       <h4 className="mb-3">Eventi salvati</h4>
